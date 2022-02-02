@@ -8,4 +8,3 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(extern)
 pybind11_add_module(_rostpy src/rostpy/bindings.cpp)
-

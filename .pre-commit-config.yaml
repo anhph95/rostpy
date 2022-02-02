@@ -73,4 +73,3 @@ repos:
     language: pygrep
     entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
     exclude: .pre-commit-config.yaml
-

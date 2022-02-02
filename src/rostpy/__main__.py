@@ -1,16 +1,21 @@
 """Command-line interface."""
+from __future__ import annotations
+
 import logging
 import os
 
 import click
 
-from .utils import load_topic_model
-from .utils import load_words
-from .utils import save_topic_model
-from .utils import write_poses
-from .utils import write_time_perplexity
-from .utils import write_topics
-from _rostpy import ROST_t, ROST_xy, ROST_txy, parallel_refine
+from _rostpy import ROST_t, ROST_txy, ROST_xy, parallel_refine
+
+from .utils import (
+    load_topic_model,
+    load_words,
+    save_topic_model,
+    write_poses,
+    write_time_perplexity,
+    write_topics,
+)
 
 logger = logging.getLogger(__name__)
 THREADS = os.cpu_count()
@@ -232,10 +237,10 @@ def topics_refine(*args, **opt):
     assert opt["dim"] in ("t", "xy", "txy"), (
         "dim must be 't', 'xy', or 'txy'; you provided '%s'" % opt["dim"]
     )
-    nd = len(opt["dim"]) != 1
-    pose = (
-        [opt["g_time"]] if not nd else [opt["g_time"], opt["g_space"], opt["g_space"]]
-    )
+    # nd = len(opt["dim"]) != 1
+    # pose = (
+    #     [opt["g_time"]] if not nd else [opt["g_time"], opt["g_space"], opt["g_space"]]
+    # )
 
     if opt["dim"] == "t":
         ROST = ROST_t
@@ -247,10 +252,10 @@ def topics_refine(*args, **opt):
         assert opt["dim"] == "txy", (
             "dim must be 't', 'xy', or 'txy'; you gave %s" % opt["dim"]
         )
-        ROST = ROST_xy
+        ROST = ROST_txy
         posedim = 3
 
-    cell_space = opt["cell_space"]
+    # cell_space = opt["cell_space"]
     cell_time = opt["cell_time"]
     rost = ROST(
         V=opt["vocabsize"],

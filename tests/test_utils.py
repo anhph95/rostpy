@@ -1,11 +1,13 @@
 """Test cases for the utils module."""
-import itertools
-import os
+# from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
-from rostpy import utils
+# import itertools
+# import os
+# import pytest
 
+# from rostpy import utils
 
 # def dictlist_to_listdicts(dictlist):
 #     keys, values = zip(*dictlist.items())

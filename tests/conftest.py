@@ -1,6 +1,8 @@
 """Fixtures for test cases."""
+from __future__ import annotations
+
 import os
-import tempfile
+
 try:
     from shutil import copy_tree
 except ImportError:
@@ -8,8 +10,8 @@ except ImportError:
 
 import pytest
 
-#from rostpy import rostpy
-from rostpy import ROST_t, ROST_xy, ROST_txy
+# from rostpy import rostpy
+from rostpy import ROST_t, ROST_txy, ROST_xy
 
 
 @pytest.fixture(scope="function")

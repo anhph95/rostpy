@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 from collections import defaultdict
 
@@ -29,7 +31,11 @@ def load_words(
             pose_lines = [[float(x) for x in line] for line in pose_lines]
 
     assert (posedim == 1) or (
-        have_poses and all(len(pose_line) == len(word_line) * (posedim - 1) + 1 for pose_line, word_line in zip(pose_lines, word_lines))
+        have_poses
+        and all(
+            len(pose_line) == len(word_line) * (posedim - 1) + 1
+            for pose_line, word_line in zip(pose_lines, word_lines)
+        )
     ), "Must have synced poses"
 
     words_for_pose = defaultdict(list)

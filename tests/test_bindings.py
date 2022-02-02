@@ -1,10 +1,10 @@
 """Test cases for the C++ bindings for ROST."""
-import pytest
+from __future__ import annotations
 
-import rostpy
+import pytest
 
 
 @pytest.mark.skip
 def test_bindings_succeeds() -> None:
     """It exits with a status code of zero."""
-    assert False
+    raise AssertionError()
