@@ -20,6 +20,9 @@ manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64"
 before-all = [
     "apt-get update",
     "apt-get install -y git cmake libboost-all-dev",
+    "mkdir ~/.ssh",
+    "ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts",
+    "ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts",
     "git submodule init",
     "git submodule update"
 ]
