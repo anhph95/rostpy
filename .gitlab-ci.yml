@@ -33,7 +33,17 @@ build:
 test:
   when: on_success
   image: thekevjames/nox:2022.1.7
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
   script:
+    - curl -sSL https://get.docker.com/ | sh
     - apt update
     - apt install -y python3.10 python3.10-dev python3.10-distutils
     - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
