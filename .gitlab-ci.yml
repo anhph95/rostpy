@@ -31,7 +31,7 @@ build:
   image: python:${PYTHONVERSION}
   # make a docker daemon available for cibuildwheel to use
   script:
-    - python -m pip wheel --wheel-dir wheelhouse
+    - python -m pip wheel --wheel-dir wheelhouse .
   artifacts:
     paths:
       - wheelhouse/
