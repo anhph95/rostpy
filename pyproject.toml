@@ -3,7 +3,6 @@ requires = [
     "wheel",
     "setuptools>=42",
     "setuptools_scm>=6.2",
-    "ninja",
     "pybind11>=2.7.0",
 ]
 build-backend = "setuptools.build_meta"
@@ -21,10 +20,7 @@ before-all = [
     "apt-get update",
     "apt-get install -y git cmake libboost-all-dev",
     "mkdir ~/.ssh",
-    "ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts",
     "ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts",
-    "ssh -vT git@github.com",
-    "ssh -vT git@gitlab.com",
     "git submodule init",
     "git submodule update"
 ]

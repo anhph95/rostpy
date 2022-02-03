@@ -19,9 +19,10 @@ def tests(session: nox.Session) -> None:
     """
     Run the unit and regular tests.
     """
-    # build_dir = session.create_tmp()
+    build_dir = session.create_tmp()
+    session.run_always("python", "-m", "pip", "wheel", "--wheel-dir", build_dir, ".")
     session.install("pytest")
-    session.install(".[test]")
+    session.install("--find-links", build_dir, "rostpy")
     session.run("pytest", *session.posargs)
 
 

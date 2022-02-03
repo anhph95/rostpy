@@ -1,6 +1,6 @@
 prune *
 graft src
 graft tests
-graft extern
+graft extern/librost/include
 include LICENSE.txt README.md pyproject.toml setup.py setup.cfg
 global-exclude __pycache__ *.py[cod] .*

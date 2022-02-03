@@ -9,7 +9,7 @@ set(CXX_STANDARD 14)
 set(CXX_STANDARD_REQUIRED ON)
 set(CXX_EXTENSIONS ON)
 
-add_subdirectory(extern/librost)
-add_subdirectory(extern/pybind11)
+find_package(pybind11 REQUIRED)
 
+include_directories(extern/librost/include)
 pybind11_add_module(_rostpy src/rostpy/bindings.cpp)
