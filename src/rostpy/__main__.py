@@ -5,7 +5,6 @@ import logging
 import os
 
 import click
-
 from _rostpy import ROST_t, ROST_txy, ROST_xy, parallel_refine
 
 from .utils import (

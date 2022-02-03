@@ -24,8 +24,7 @@ FetchContent_MakeAvailable(extern_pybind11)
 FetchContent_Declare(
   extern_rost
 
-  GIT_REPOSITORY https://gitlab.com/warplab/rost-cli.git
-  SOURCE_SUBDIR librost
+  GIT_REPOSITORY https://gitlab.com/warplab/sunshine/librost.git
   )
 
 FetchContent_GetProperties(extern_rost)
