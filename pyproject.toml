@@ -13,13 +13,12 @@ write_to = "src/rostpy/_version.py"
 [tool.cibuildwheel]
 test-extras = ["test"]
 test-command = "pytest {project}/tests"
-manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64"
-archs = "native"
+manylinux-x86_64-image = "manylinux_2_24"
 
 [tool.cibuildwheel.linux]
 before-all = [
-    "apt-get update",
-    "apt-get install -y git cmake libboost-all-dev",
+    "apt-get update || apk update",
+    "apt-get install -y git cmake libboost-all-dev || apk install git cmake libboost-all-dev",
     "mkdir ~/.ssh",
     "ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts",
     "git submodule init",
