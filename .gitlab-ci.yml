@@ -39,7 +39,7 @@ build:
     DOCKER_TLS_CERTDIR: ""
   script:
     - curl -sSL https://get.docker.com/ | sh
-    - python -m pip install cibuildwheel
+    - python${PYTHONVERSION} -m pip install cibuildwheel
     - cibuildwheel --output-dir wheelhouse
   artifacts:
     paths:
@@ -48,5 +48,5 @@ build:
 test:
   image: thekevjames/nox:2019.11.9
   script:
-    - python -m pip install nox
-    - python -m nox  # you can also use tox
+    - python3 -m pip install nox
+    - python3 -m nox  # you can also use tox
