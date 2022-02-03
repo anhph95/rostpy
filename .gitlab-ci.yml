@@ -27,7 +27,7 @@ test:
   script:
     - apt update
     - apt install -y python3.10 python3.10-dev python3.10-distutils
-    - python3.10 -m pip install --upgrade pip
+    - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
     - nox  # you can also use tox
 
 build:
