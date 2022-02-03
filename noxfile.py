@@ -21,7 +21,8 @@ def tests(session: nox.Session) -> None:
     """
     build_dir = session.create_tmp()
     session.install("pytest")
-    session.run("python", "-m", "pip", "wheel", "--wheel-dir", build_dir, ".")
+    session.install("cibuildwheel")
+    session.run("cibuildwheel", "--output-dir", build_dir)
     session.install("--no-index", "--find-links", build_dir, "rostpy")
     session.run("pytest", *session.posargs)
 

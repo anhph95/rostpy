@@ -17,7 +17,7 @@ test-command = "pytest {project}/tests"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_24_x86_64"
 
 [tool.cibuildwheel.linux]
-before-all = "apt-get install -y git cmake libboost-all-dev"
+before-all = "apt-get update && apt-get install -y git cmake libboost-all-dev"
 
 
 [tool.pytest.ini_options]
