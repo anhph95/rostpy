@@ -23,9 +23,8 @@ wheel:
   artifacts:
     paths:
       - wheels
-  rules:
-    if: $CI_COMMIT_TAG
-
+  only:
+    - tags
 dist:
   stage: build
   image: python:latest
@@ -34,8 +33,8 @@ dist:
   artifacts:
     paths:
       - dist
-  rules:
-    if: $CI_COMMIT_TAG
+  only:
+    - tags
 
 test:
   stage: test
