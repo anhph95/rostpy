@@ -6,7 +6,7 @@
 
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
-image: python:latest
+
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -22,22 +22,13 @@ cache:
   paths:
     - .cache/pip
 
-before_script:
-  - apt-get update
-  - apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev
-  - curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-  - export PYENV_ROOT="$HOME/.pyenv"
-  - export PATH="$PYENV_ROOT/bin:$PATH"
-  - eval "$(pyenv init --path)"
-  - eval "$(pyenv virtualenv-init -)"
-  - pyenv install 3.8.12
-  - pyenv install 3.9.10
-  - pyenv install 3.10.2
-  - pyenv global 3.8.12 3.9.10 3.10.2
-  - pip install pipx
-  - pipx ensurepath
+
 
 build:
+  parallel:
+    matrix:
+      - PYTHONVERSION: [3.8, 3.9, 3.10]
+  image: python:${PYTHONVERSION}
   # make a docker daemon available for cibuildwheel to use
   services:
     - name: docker:dind
@@ -50,18 +41,17 @@ build:
     DOCKER_TLS_CERTDIR: ""
   script:
     - curl -sSL https://get.docker.com/ | sh
-    - python3.8 -m pip install cibuildwheel
-    - python3.8 -m cibuildwheel --output-dir wheelhouse
-    - python3.9 -m pip install cibuildwheel
-    - python3.9 -m cibuildwheel --output-dir wheelhouse
-    - python3.10 -m pip install cibuildwheel
-    - python3.10 -m cibuildwheel --output-dir wheelhouse
-    
+    - python -m pip install cibuildwheel
+    - python -m cibuildwheel --output-dir wheelhouse
   artifacts:
     paths:
       - wheelhouse/
 
 test:
+  parallel:
+    matrix:
+      - PYTHONVERSION: [3.8, 3.9, 3.10]
+  image: python:${PYTHONVERSION}
   script:
-    - pipx install nox
-    - nox  # you can also use tox
+    - python -m pip install nox
+    - python -m nox  # you can also use tox
