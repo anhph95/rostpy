@@ -19,11 +19,9 @@ def tests(session: nox.Session) -> None:
     """
     Run the unit and regular tests.
     """
-    build_dir = session.create_tmp()
+    # build_dir = session.create_tmp()
     session.install("pytest")
-    session.install("cibuildwheel")
-    session.run("cibuildwheel", "--output-dir", build_dir)
-    session.install("--no-index", "--find-links", build_dir, "rostpy")
+    session.install(".[test]")
     session.run("pytest", *session.posargs)
 
 

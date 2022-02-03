@@ -8,10 +8,7 @@
 # https://hub.docker.com/r/library/python/tags/
 
 build:
-  parallel:
-    matrix:
-      - PYTHONVERSION: ["3.8", "3.9", "3.10"]
-  image: python:${PYTHONVERSION}
+  image: python:latest
   # make a docker daemon available for cibuildwheel to use
   services:
     - name: docker:dind
@@ -24,7 +21,7 @@ build:
     DOCKER_TLS_CERTDIR: ""
   script:
     - curl -sSL https://get.docker.com/ | sh
-    - python${PYTHONVERSION} -m pip install cibuildwheel
+    - python3 -m pip install cibuildwheel
     - cibuildwheel --output-dir wheelhouse
   artifacts:
     paths:
@@ -48,4 +45,3 @@ test:
     - apt install -y python3.10 python3.10-dev python3.10-distutils
     - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
     - nox  # you can also use tox
-
