@@ -23,8 +23,7 @@ wheel:
   artifacts:
     paths:
       - wheels
-  only:
-    - tags
+
 dist:
   stage: build
   image: python:latest
@@ -33,8 +32,6 @@ dist:
   artifacts:
     paths:
       - dist
-  only:
-    - tags
 
 test:
   stage: test
@@ -42,7 +39,7 @@ test:
   image: thekevjames/nox:2022.1.7
   script:
     - apt update
-    - apt install -y python3.10 python3.10-dev python3.10-distutils
+    - apt install -y python3.10 python3.10-dev python3.10-distutils git cmake
     - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
     - nox  # you can also use tox
 
