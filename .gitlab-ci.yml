@@ -48,6 +48,6 @@ build:
 test:
   image: thekevjames/nox:2022.1.7
   script:
-    - apt install python3.10 python3.10-dev python3.10 
+    - apt install -y python3.10 python3.10-dev python3.10 
     - python3.10 -m pip install --upgrade pip
     - nox  # you can also use tox
