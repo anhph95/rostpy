@@ -1,0 +1,67 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml
+
+# Official language image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/python/tags/
+image: python:latest
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Pip's cache doesn't store the python packages
+# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+#
+# If you want to also cache the installed packages, you have to install
+# them in a virtualenv and cache it as well.
+cache:
+  paths:
+    - .cache/pip
+
+before_script:
+  - apt-get update
+  - apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev
+  - curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+  - export PYENV_ROOT="$HOME/.pyenv"
+  - export PATH="$PYENV_ROOT/bin:$PATH"
+  - eval "$(pyenv init --path)"
+  - eval "$(pyenv virtualenv-init -)"
+  - pyenv install 3.8.12
+  - pyenv install 3.9.10
+  - pyenv install 3.10.2
+  - pyenv global 3.8.12 3.9.10 3.10.2
+  - pip install pipx
+  - pipx ensurepath
+
+build:
+  # make a docker daemon available for cibuildwheel to use
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - curl -sSL https://get.docker.com/ | sh
+    - python3.8 -m pip install cibuildwheel
+    - python3.8 -m cibuildwheel --output-dir wheelhouse
+    - python3.9 -m pip install cibuildwheel
+    - python3.9 -m cibuildwheel --output-dir wheelhouse
+    - python3.10 -m pip install cibuildwheel
+    - python3.10 -m cibuildwheel --output-dir wheelhouse
+    
+  artifacts:
+    paths:
+      - wheelhouse/
+
+test:
+  script:
+    - pipx install nox
+    - nox  # you can also use tox
