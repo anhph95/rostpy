@@ -46,7 +46,8 @@ build:
       - wheelhouse/
 
 test:
-  image: thekevjames/nox:2019.11.9
+  image: thekevjames/nox:2022.1.7
   script:
-    - python3 -m pip install nox
-    - python3 -m nox  # you can also use tox
+    - apt install python3.10 python3.10-dev python3.10 
+    - python3.10 -m pip install --upgrade pip
+    - nox  # you can also use tox
