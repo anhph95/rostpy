@@ -42,7 +42,9 @@ test:
     - apt update
     - apt install -y python3.10 python3.10-dev python3.10-distutils git cmake
     - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
-    - nox  # you can also use tox
+    - mkdir ~/.ssh && ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+    - git submodule update --init
+    - nox
 
 twine:
   stage: deploy
