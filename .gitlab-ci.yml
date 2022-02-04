@@ -28,6 +28,7 @@ dist:
   stage: build
   image: python:latest
   script:
+    - python3 -m pip install build
     - python3 -m build --sdist --outdir dist
   artifacts:
     paths:
