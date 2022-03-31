@@ -77,6 +77,10 @@ void create_rost(py::module_ m, const char *name) {
       .def("estimate", &R::estimate)
       .def("computeMaxLikelihoodTopics", &R::computeMaxLikelihoodTopics)
       .def("addObservations", &R::addObservations)
+      .def("set_topic_model",
+           static_cast<void (R::*)(const std::vector<int> &,
+                                   const std::vector<int> &)>(
+               &R::set_topic_model))
       .def_readwrite("g_sigma", &R::g_sigma)
       .def_readwrite("update_global_model", &R::update_global_model)
       .def_property_readonly("K", &R::get_num_topics)
