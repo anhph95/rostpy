@@ -8,5 +8,5 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 find_package(pybind11 REQUIRED)
 
-include_directories(extern/librost/include)
+include_directories(extern/librost/librost/include)
 pybind11_add_module(_rostpy src/rostpy/bindings.cpp)
