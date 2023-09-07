@@ -16,6 +16,32 @@ wheel:
     DOCKER_DRIVER: overlay2
     # See https://github.com/docker-library/docker/pull/166
     DOCKER_TLS_CERTDIR: ""
+  parallel:
+    matrix:
+      - CIBW_ARCH: 'x86_64'
+        CIBW_BUILD:
+          - 'cp38-manylinux_x86_64'
+          - 'cp38-musllinux_x86_64'
+          - 'cp39-manylinux_x86_64'
+          - 'cp39-musllinux_x86_64'
+          - 'cp310-manylinux_x86_64'
+          - 'cp310-musllinux_x86_64'
+          - 'cp311-manylinux_x86_64'
+          - 'cp311-musllinux_x86_64'
+        CIBW_MUSLLINUX_X86_64_IMAGE: 'musllinux_1_1'
+        CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_17'
+      - CIBW_ARCH: 'i686'
+        CIBW_BUILD:
+          - 'cp38-manylinux_i686'
+          - 'cp38-musllinux_i686'
+          - 'cp39-manylinux_i686'
+          - 'cp39-musllinux_i686'
+          - 'cp310-manylinux_i686'
+          - 'cp310-musllinux_i686'
+          - 'cp311-manylinux_i686'
+          - 'cp311-musllinux_i686'
+        CIBW_MUSLLINUX_I686_IMAGE: 'musllinux_1_1'
+        CIBW_MANYLINUX_I686_IMAGE: 'manylinux_2_17'
   script:
     - curl -sSL https://get.docker.com/ | sh
     - python3 -m pip install cibuildwheel
@@ -56,7 +82,7 @@ twine:
     - if: $CI_COMMIT_TAG
   script:
     - export
-    - python3 -m pip install twine
+    - python3 -m pip install twine pybind11
     - python setup.py sdist
     - python3 -m twine upload -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
 release_job:
