@@ -1,3 +1,4 @@
 [submodule "extern/librost"]
 	path = extern/librost
-	url = https://gitlab.com/warplab/sunshine/librost.git
+	url = https://gitlab.com/warplab/rost-cli.git
+	branch = master
