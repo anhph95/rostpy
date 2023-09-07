@@ -142,3 +142,5 @@ cython_debug/
 
 # setuptools_scm
 src/*/_version.py
+# IDE files
+.idea/
