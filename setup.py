@@ -10,7 +10,7 @@ setup(
         Pybind11Extension(
             "_rostpy",
             ["src/rostpy/bindings.cpp"],
-            include_dirs=["extern/librost/include"],
+            include_dirs=["extern/librost/librost/include"],
         )
     ],
     cmdclass={"build_ext": build_ext},
