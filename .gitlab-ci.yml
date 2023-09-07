@@ -60,7 +60,6 @@ test:
   stage: test
   image: thekevjames/nox:2022.1.7
   script:
-    - echo $TWINE_USERNAME
     - apt update
     - apt install -y python3.10 python3.10-dev python3.10-distutils git cmake libboost-all-dev
     - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
