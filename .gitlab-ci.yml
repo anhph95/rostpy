@@ -29,7 +29,7 @@ wheel:
           - 'cp311-manylinux_x86_64'
           - 'cp311-musllinux_x86_64'
         CIBW_MUSLLINUX_X86_64_IMAGE: 'musllinux_1_1'
-        CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_17'
+        CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_28'
       - CIBW_ARCH: 'i686'
         CIBW_BUILD:
           - 'cp38-manylinux_i686'
@@ -41,7 +41,7 @@ wheel:
           - 'cp311-manylinux_i686'
           - 'cp311-musllinux_i686'
         CIBW_MUSLLINUX_I686_IMAGE: 'musllinux_1_1'
-        CIBW_MANYLINUX_I686_IMAGE: 'manylinux_2_17'
+        CIBW_MANYLINUX_I686_IMAGE: 'manylinux_2_28'
   script:
     - curl -sSL https://get.docker.com/ | sh
     - python3 -m pip install cibuildwheel
