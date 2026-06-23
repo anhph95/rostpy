@@ -1,28 +1,85 @@
 [build-system]
 requires = [
     "wheel",
-    "setuptools>=42",
-    "setuptools_scm>=6.2",
-    "pybind11>=2.11.1",
+    "setuptools>=69",
+    "setuptools_scm>=8",
+    "pybind11>=2.12",
 ]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools_scm]
-write_to = "src/rostpy/_version.py"
+[project]
+name = "rostpy"
+description = "Python bindings for ROST"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE.txt"}
+authors = [
+    {name = "John San Soucie", email = "jsansoucie@whoi.edu"},
+]
+maintainers = [
+    {name = "John San Soucie", email = "jsansoucie@whoi.edu"},
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "click",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=3",
+    "pytest>=7",
+]
+docs = [
+    "Sphinx>=7",
+    "myst-parser>=2",
+    "sphinx-book-theme>=1",
+    "sphinx-copybutton",
+]
+test = [
+    "pytest>=7",
+]
+
+[project.scripts]
+rostpy = "rostpy.__main__:cli"
+
+[project.urls]
+Documentation = "https://rostpy.readthedocs.io/"
+"Bug Tracker" = "https://gitlab.com/warplab/rostpy/issues"
+Discussions = "https://gitlab.com/warplab/rostpy/discussions"
+Changelog = "https://gitlab.com/warplab/rostpy/releases"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]
+version_file = "src/rostpy/_version.py"
+fallback_version = "0.2.0"
+git_describe_command = "git describe --dirty --tags --long --match v* --match [0-9]*"
+scm.git.pre_parse = "fail_on_missing_submodules"
 
 [tool.cibuildwheel]
 test-extras = ["test"]
 test-command = "pytest {project}/tests"
-manylinux-x86_64-image = "manylinux2014"
+manylinux-x86_64-image = "manylinux_2_28"
+build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
+skip = "*-musllinux_i686 *-manylinux_i686"
 
 [tool.cibuildwheel.linux]
 before-all = [
     "apt-get update || apk update || yum check-update",
     "apt-get install -y git cmake libboost-all-dev || apk add git cmake boost-dev openssh || yum -y install git cmake boost-devel",
-    "mkdir ~/.ssh",
+    "mkdir -p ~/.ssh",
     "ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts",
-    "git submodule init",
-    "git submodule update"
+    "git submodule update --init --recursive",
 ]
 
 

@@ -14,15 +14,15 @@ def lint(session: nox.Session) -> None:
     session.run("pre-commit", "run", "--all-files", *session.posargs)
 
 
-@nox.session(python=["3.8", "3.9", "3.10", "3.11"])
+@nox.session(python=["3.10", "3.11", "3.12", "3.13", "3.14"])
 def tests(session: nox.Session) -> None:
     """
     Run the unit and regular tests.
     """
     build_dir = session.create_tmp()
     session.run_always("python", "-m", "pip", "wheel", "--wheel-dir", build_dir, ".")
-    session.install("pytest")
-    session.install("--find-links", build_dir, "rostpy")
+    session.install("pytest>=7")
+    session.install("--find-links", build_dir, "rostpy[test]")
     session.run("pytest", *session.posargs)
 
 
