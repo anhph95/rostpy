@@ -239,14 +239,20 @@ print("perplexity:", model.perplexity())
 
 ## Model choices
 
-Use `ROST_t` when samples are ordered only by time:
+`rostpy` exposes three model classes. They use the same topic-modeling methods,
+but differ in how they interpret the cell pose.
+
+Use `ROST_t` when samples are ordered only by time. The pose has one value:
+`[t]`.
 
 ```python
 model = rostpy.ROST_t(V=len(taxa), K=2, alpha=0.5, beta=0.5, gamma=0.1)
 model.add_observation([t], obs)
 ```
 
-Use `ROST_txy` when samples have time and spatial coordinates:
+Use `ROST_txy` when samples have time and spatial coordinates. The pose has
+three values: `[time_bin, x_bin, y_bin]`. This is the best choice when nearby
+samples in time and space should influence each other.
 
 ```python
 model = rostpy.ROST_txy(V=len(taxa), K=2, alpha=0.5, beta=0.5, gamma=0.1)
@@ -254,62 +260,134 @@ model.add_observation([time_bin, x_bin, y_bin], obs)
 ```
 
 Use `ROST_xy` when spatial location matters but time should be ignored when
-matching cells:
+matching cells. The pose is still `[time_bin, x_bin, y_bin]`, but the model
+hashes cells by the spatial dimensions.
 
 ```python
 model = rostpy.ROST_xy(V=len(taxa), K=2, alpha=0.5, beta=0.5, gamma=0.1)
 model.add_observation([time_bin, x_bin, y_bin], obs)
 ```
 
+Constructor options:
+
+- `V`: vocabulary size. For abundance tables, this is the number of taxa.
+- `K`: number of latent topics or communities. Larger `K` allows more
+  communities, but can make results harder to interpret.
+- `alpha`: smoothing for topic mixtures inside each cell/sample. Larger values
+  allow samples to mix more evenly across topics; smaller values encourage each
+  sample to use fewer topics.
+- `beta`: smoothing for taxon/word distributions inside each topic. Larger
+  values make topics broader; smaller values make topics concentrate on fewer
+  taxa.
+- `gamma`: topic-growth parameter used when `enable_auto_topics_size(True)` is
+  enabled. It is not the neighborhood smoothing parameter.
+
+Important model attributes:
+
+- `model.K`: configured number of topics.
+- `model.active_K`: number of active topics when automatic topic growth is
+  enabled.
+- `model.V`: vocabulary size.
+- `model.g_sigma`: neighborhood decay. Smaller values reduce the influence of
+  neighboring cells faster.
+- `model.update_global_model`: whether refinement updates the global topic-word
+  count matrix.
+
 ## Core callable API
 
 Module-level functions:
 
-- `parallel_refine(model, nt)`
-- `parallel_refine_tau(model, nt, tau, iter)`
+- `parallel_refine(model, nt)`: refine all current cells using `nt` worker
+  threads. Repeating this call performs multiple refinement epochs.
+- `parallel_refine_tau(model, nt, tau, iter)`: refine `iter` sampled cells using
+  `nt` worker threads. The `tau` parameter biases which cell IDs are selected;
+  larger values favor later cells.
 
 Model classes:
 
-- `ROST_t`
-- `ROST_xy`
-- `ROST_txy`
+- `ROST_t`: temporal model with poses shaped like `[t]`.
+- `ROST_xy`: spatial model with poses shaped like `[t, x, y]`, but time is
+  ignored for cell matching.
+- `ROST_txy`: spatiotemporal model with poses shaped like `[t, x, y]`.
 
-Common model methods:
+Observation methods:
 
-- `add_observation(pose, words, update_model=True)`
-- `add_observation(pose, words, topics, update_model=True)`
-- `addObservations(pose, words, topics=[], update_model=True)`
-- `refine_cell(cell_id, blocking=True)`
-- `refine_pose(pose, blocking=True)`
-- `estimate_cell(cell_id, update_ppx=False)`
-- `refine_ext(words, n_iter=10, nZg=[])`
-- `get_topics_for_pose(pose)`
-- `get_ml_topics_for_pose(pose, update_ppx=False)`
-- `get_topics_and_ppx_for_pose(pose)`
-- `get_ml_topics_and_ppx_for_pose(pose)`
-- `get_topic_model()`
-- `set_topic_model(topic_model)`
-- `set_topic_model_flat(topic_model, topic_weights)`
-- `get_topic_weights()`
-- `perplexity(recompute=False)`
-- `perplexity(pose, recompute=False)`
-- `time_perplexity(t, recompute=False)`
-- `word_perplexity(pose, recompute=False)`
-- `topic_perplexity(pose)`
-- `cell_perplexity_topic(nZ)`
-- `cell_perplexity_word(words, nZ)`
-- `word_topic_perplexity(pose)`
-- `num_cells()`
-- `get_num_words()`
-- `get_refine_count()`
-- `get_word_refine_count()`
-- `get_poses_by_time()`
+- `add_observation(pose, words, update_model=True)`: add one sample/cell to the
+  model. `pose` is the time/spatial coordinate, and `words` is a list of integer
+  taxon IDs.
+- `add_observation(pose, words, topics, update_model=True)`: add one sample with
+  explicit initial topic labels. `topics` must have the same length as `words`.
+- `addObservations(pose, words, topics=[], update_model=True)`: compatibility
+  spelling for `add_observation`.
+- `forget(cell_id=-1)`: remove one cell from the model. If `cell_id` is not
+  supplied, `librost` chooses a cell internally.
+
+Refinement and estimation methods:
+
+- `refine_cell(cell_id, blocking=True)`: run one Gibbs-style refinement update
+  for a cell by numeric cell ID.
+- `refine_pose(pose, blocking=True)`: run one refinement update for a cell by
+  pose, such as `[t]` or `[time_bin, x_bin, y_bin]`.
+- `estimate_cell(cell_id, update_ppx=False)`: return maximum-likelihood topic
+  labels for one cell without replacing the stored labels.
+- `refine_ext(words, n_iter=10, nZg=[])`: sample topic labels for a temporary
+  list of words without adding those words to the model. This is useful for
+  asking how an external sample would be labeled.
+
+Topic label methods:
+
+- `get_topics_for_pose(pose)`: return the current stored topic labels for the
+  words at a pose. These are the current sampled labels.
+- `get_ml_topics_for_pose(pose, update_ppx=False)`: return
+  maximum-likelihood topic labels for the words at a pose. This is usually a
+  cleaner choice for final summaries.
+- `get_topics_and_ppx_for_pose(pose)`: return current sampled topic labels and
+  the current perplexity value for a pose.
+- `get_ml_topics_and_ppx_for_pose(pose)`: return maximum-likelihood topic labels
+  and perplexity for a pose.
+
+Topic model methods:
+
+- `get_topic_model()`: return the learned topic-word count matrix as a nested
+  list shaped `K x V`, where rows are topics and columns are taxa/words.
+- `set_topic_model(topic_model)`: replace the topic-word count matrix with a
+  nested `K x V` list.
+- `set_topic_model_flat(topic_model, topic_weights)`: older compatibility
+  method that accepts a flattened topic-word matrix and topic weights.
+- `get_topic_weights()`: return total word counts assigned to each topic.
+
+Perplexity and diagnostics:
+
+- `perplexity(recompute=False)`: return whole-model perplexity. Lower values
+  usually mean the model predicts the observed words better.
+- `perplexity(pose, recompute=False)`: return perplexity for one pose.
+- `time_perplexity(t, recompute=False)`: return perplexity for one time step.
+- `word_perplexity(pose, recompute=False)`: return per-word perplexity values
+  for a pose.
+- `topic_perplexity(pose)`: return how surprising the topic distribution is at a
+  pose under the global topic weights.
+- `cell_perplexity_topic(nZ)`: return topic perplexity for a topic-count vector,
+  where `nZ[k]` is the count assigned to topic `k`.
+- `cell_perplexity_word(words, nZ)`: return word perplexity for a list of words
+  under a topic-count vector.
+- `word_topic_perplexity(pose)`: return per-word topic perplexity at a pose.
+
+Counters and indexing:
+
+- `num_cells()`: return the number of cells/samples currently in the model.
+- `get_num_words()`: return the vocabulary size `V`.
+- `get_refine_count()`: return the number of cell refinements completed.
+- `get_word_refine_count()`: return the number of word-token refinements
+  completed.
+- `get_poses_by_time()`: return a dictionary mapping time bins to poses.
 
 Lower-level controls:
 
-- `forget(cell_id=-1)`
-- `add_count(w, z, c=1)`
-- `relabel(w, z_old, z_new)`
-- `shuffle_topics()`
-- `update_gamma()`
-- `enable_auto_topics_size(enabled=True)`
+- `add_count(w, z, c=1)`: manually add `c` counts for word/taxon `w` in topic
+  `z`.
+- `relabel(w, z_old, z_new)`: manually move one word count from topic `z_old` to
+  topic `z_new`.
+- `shuffle_topics()`: randomly shuffle topic labels in existing cells.
+- `update_gamma()`: update the internal topic-growth weights.
+- `enable_auto_topics_size(enabled=True)`: enable or disable automatic topic
+  growth controlled by `gamma`.
