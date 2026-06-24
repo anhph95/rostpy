@@ -15,23 +15,13 @@ extern/librost -> https://gitlab.com/warplab/rost-cli.git
 
 ## Installation
 
-Activate your Python environment first, then install from this GitHub fork:
+Create and activate a virtual environment, then install from this GitHub fork:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install "git+https://github.com/anhph95/rostpy.git"
-```
-
-For local development, clone with submodules:
-
-```bash
-git clone --recurse-submodules https://github.com/anhph95/rostpy.git
-```
-
-If the repository was already cloned without submodules, initialize them before
-building:
-
-```bash
-git submodule update --init --recursive
 ```
 
 The build expects the `librost` headers at:
