@@ -2,9 +2,11 @@
 
 `rostpy` provides Python bindings for ROST topic modeling.
 
-This repository is a maintenance fork of the original GitLab `rostpy`
-repository. It is hosted on GitHub so the Python package can be maintained and
-modernized here while preserving the upstream `librost` dependency.
+This repository is a maintenance fork of the original GitLab `rostpy` project:
+https://gitlab.com/warplab/rostpy
+
+The original `rostpy` project provides Python bindings for the ROST CLI project:
+https://gitlab.com/warplab/rost-cli
 
 `librost` is still provided by the upstream GitLab `rost-cli` repository through
 a Git submodule:
