@@ -35,6 +35,26 @@ extern/librost/librost/include
 GitHub source archives do not include submodule contents, so prefer Git-based
 installation instead of downloading a `.zip` archive.
 
+## Development Build
+
+For a local development build, clone the repository with submodules, activate
+your virtual environment, then install from the checkout:
+
+```bash
+git clone --recurse-submodules https://github.com/anhph95/rostpy.git
+cd rostpy
+source ~/venv/rost/bin/activate
+python -m pip install --upgrade pip
+python -m pip install .
+```
+
+If the repository was cloned without submodules, initialize them once before the
+first build:
+
+```bash
+git submodule update --init --recursive
+```
+
 ## Example notebook
 
 The worked example lives in:
